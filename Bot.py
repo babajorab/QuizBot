@@ -4,29 +4,34 @@ import Info
 import logging
 
 
+#Messages
+Welcome = 'Messages/Welcome.txt'
+ReceiveUserName = 'Messages/ReceiveUserName.txt'
+ReceivePassword = 'Messages/ReceivePassword.txt'
+UserNameNotExist = 'Messages/UserNameNotExist.txt'
+
+
 STATE = None
 USERNAME = 1
 PASSWORD = 2
-
-
 
 
 def text(update, context):
     if STATE == USERNAME:
         recieve_username(update, context)
     
-    if STATE == PASSWORD:
-        pass
+    elif STATE == PASSWORD:
+        receive_password(update, context)
 
+    else:
+        help(update, context)
+        
     
 def start(update, context):
     global STATE
-    update.message.reply_text(read_file('Messages/Welcome.txt'))
-    update.message.reply_text(read_file('Messages/ReceiveUserName.txt'))
+    update.message.reply_text(read_file(Welcome))
+    update.message.reply_text(read_file(ReceiveUserName))
     STATE = USERNAME
-
-def help(update, context):
-    update.message.reply_text('Help!')
 
 
 def recieve_username(update, context):
@@ -35,34 +40,26 @@ def recieve_username(update, context):
 
     #if(database.exist_username(username))
     if(username == "sm"):
-        pass
-        
-        
+        STATE = PASSWORD
+        context.user_data['username'] = username
+        update.message.reply_text(read_file(ReceivePassword))
+                
     else:
-        update.message.reply_text(read_file('Messages/UserNameNotExist.txt'))
+        update.message.reply_text(read_file(UserNameNotExist))
         STATE = None
         
-        
-    update.message.reply_text("your username is : " + username)
+
+
+def receive_password(update, context):
+    password = update.message.text
+    update.message.reply_text('password : ' + password) 
+    update.message.reply_text('username : ' + context.user_data['username'])
     
 
 
 
-
-
-
-
-
-
-
-def password(update, context):
-    update.message.reply_text("you enter password")
-
-
-
-
-
-
+def help(update, context):
+    update.message.reply_text('Help!')
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)

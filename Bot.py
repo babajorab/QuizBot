@@ -9,12 +9,14 @@ Welcome = 'Messages/Welcome.txt'
 ReceiveUserName = 'Messages/ReceiveUserName.txt'
 ReceivePassword = 'Messages/ReceivePassword.txt'
 UserNameNotExist = 'Messages/UserNameNotExist.txt'
+WrongPassword = 'Messages/WrongPassword.txt'
 
 
 STATE = None
 USERNAME = 1
 PASSWORD = 2
 
+COUNT_WRONG = 0
 
 def text(update, context):
     if STATE == USERNAME:
@@ -38,7 +40,8 @@ def recieve_username(update, context):
     global STATE
     username = update.message.text
 
-    #if(database.exist_username(username))
+    #FIXED
+    #if database.exist_username(username)
     if(username == "sm"):
         STATE = PASSWORD
         context.user_data['username'] = username
@@ -51,9 +54,28 @@ def recieve_username(update, context):
 
 
 def receive_password(update, context):
+    global STATE, COUNT_WRONG
+    
     password = update.message.text
-    update.message.reply_text('password : ' + password) 
-    update.message.reply_text('username : ' + context.user_data['username'])
+    username = context.user_data['username'])
+
+    #FIXED
+    #if database.check_user_pass(username, password)
+    if(password == '1234'):
+        pass
+
+    elif COUNT_WRONG == 3:
+        #M start again
+        STATE = None
+        COUNT_WRONG = 0
+        
+    else:
+        COUNT_WRONG += 1
+        update.message.reply_text(read_file(WrongPassword))
+        #M try again
+        
+        
+    
     
 
 
